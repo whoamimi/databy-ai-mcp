@@ -1,0 +1,26 @@
+[project]
+name = "databy-ai-mcp"
+version = "0.1.0"
+description = "Databy AI MCP Server on FastMCP."
+readme = "README.md"
+authors = [
+    { name = "Mimi Phan", email = "159568507+mimipynb@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp[apps]>=3.4.7",
+    "httpx>=0.28.1",
+    "ydata-profiling>=4.18.4",
+]
+
+[project.scripts]
+databy-ai-mcp = "databy_ai_mcp:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+docs = [
+    "mkdocs-material>=9.7.7",
+]
