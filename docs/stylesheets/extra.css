@@ -1,0 +1,150 @@
+/*
+  Databy AI MCP docs theme.
+  Palette sampled from the dino mascot icons: light sky-blue fill (#A7DDF8)
+  over a steel-blue outline (#3C82B4), set on a deep navy "night sky" ground.
+*/
+
+/* ---- custom primary/accent color scheme, keyed off theme.palette.primary/accent: custom ---- */
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: #0f2033;
+  --md-primary-fg-color--light: #163049;
+  --md-primary-fg-color--dark: #081420;
+  --md-primary-bg-color: #eaf6fd;
+  --md-primary-bg-color--light: #eaf6fd;
+}
+
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: #7ec8ea;
+  --md-accent-fg-color--transparent: #7ec8ea1a;
+  --md-accent-bg-color: #0b1420;
+  --md-accent-bg-color--light: #0b1420;
+}
+
+/* ---- base "slate" overrides: dark navy ground that complements the sky blue ---- */
+[data-md-color-scheme="slate"] {
+  --md-hue: 205;
+
+  --md-default-bg-color: #0b1420;
+  --md-default-fg-color: #dbeefc;
+  --md-default-fg-color--light: #a9c3d6;
+  --md-default-fg-color--lighter: #6f8ba0;
+  --md-default-fg-color--lightest: #223547;
+
+  --md-code-bg-color: #0f1e2c;
+  --md-code-fg-color: #cfe8f7;
+
+  --md-typeset-color: #dbeefc;
+  --md-typeset-a-color: #7ec8ea;
+
+  --md-footer-bg-color: #081420;
+  --md-footer-bg-color--dark: #061019;
+  --md-footer-fg-color: #dbeefc;
+  --md-footer-fg-color--light: #a9c3d6;
+
+  --md-shadow-z1: 0 0.1rem 0.4rem rgba(10, 20, 32, 0.55);
+  --md-shadow-z2: 0 0.2rem 0.6rem rgba(10, 20, 32, 0.7);
+  --md-shadow-z3: 0 0.4rem 1rem rgba(10, 20, 32, 0.85);
+}
+
+/* subtle sky-blue glow behind headings / links on hover */
+[data-md-color-scheme="slate"] .md-typeset a:hover {
+  color: #a7ddf8;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  color: #eaf6fd;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  border-bottom: 1px solid #1c3348;
+  padding-bottom: 0.4rem;
+}
+
+/* nav / header */
+[data-md-color-scheme="slate"] .md-header {
+  border-bottom: 1px solid #1c3348;
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #0f2033;
+  border-bottom: 1px solid #1c3348;
+}
+
+[data-md-color-scheme="slate"] .md-nav__link--active,
+[data-md-color-scheme="slate"] .md-nav__link:focus,
+[data-md-color-scheme="slate"] .md-nav__link:hover {
+  color: #7ec8ea;
+}
+
+/* code blocks */
+[data-md-color-scheme="slate"] .md-typeset pre,
+[data-md-color-scheme="slate"] .md-typeset code {
+  border: 1px solid #1c3348;
+}
+
+/* admonitions */
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+  border-color: #1c3348;
+  background-color: #0f1e2c;
+}
+
+/* search */
+[data-md-color-scheme="slate"] .md-search__input {
+  background-color: #132537;
+}
+
+/* logo sizing in the header */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 1.6rem;
+  width: 1.6rem;
+}
+
+/* ---- homepage lifecycle grid (see index.md) ---- */
+.dino-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.dino-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #0f1e2c;
+  border: 1px solid #1c3348;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.dino-card:hover {
+  border-color: #7ec8ea;
+  transform: translateY(-2px);
+}
+
+.dino-card img {
+  height: 96px;
+  width: auto;
+}
+
+.dino-card .dino-step {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7ec8ea;
+}
+
+.dino-card strong {
+  color: #eaf6fd;
+}
+
+.dino-card span.dino-desc {
+  color: #a9c3d6;
+  font-size: 0.85rem;
+}
