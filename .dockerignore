@@ -1,0 +1,19 @@
+# Without this, the ~600MB local .venv (plus .git) gets shipped to the
+# Docker daemon as build context on every build, making it slow to the
+# point of unusable and liable to choke on venv symlinks.
+.venv/
+.git/
+.cache/
+.claude/
+docs/
+site/
+
+**/__pycache__/
+*.py[oc]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+docker-compose.yml
+DockerFile
+.dockerignore

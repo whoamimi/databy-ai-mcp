@@ -1,0 +1,11 @@
+services:
+  databy-ai-mcp:
+    build:
+      context: .
+      dockerfile: DockerFile
+    image: databy-ai-mcp:latest
+    # FastMCP speaks stdio JSON-RPC, not a TCP/HTTP transport, so there is
+    # no `ports:` mapping — an MCP client attaches via `docker compose run -i`
+    # (or `docker attach`) rather than a network connection.
+    stdin_open: true
+    tty: false
