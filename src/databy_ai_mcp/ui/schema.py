@@ -1,10 +1,25 @@
-# /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/src/databy_ai_mcp/ui/schemas.py
-#
-# -----
-# Last Modified:	Wednesday, 26th August 2026 10:13:42 pm
-# Created Date:	Wednesday, 26th Aug 2026 10:13:41 pm
-# Copyright (c) 2026 Mimi P. (https://github.com/whoamimi)
+# src/databy_ai_mcp/ui/schemas.py
+######
+#                     Databy AI MCP
+#                          │
+#              ┌───────────┴───────────┐
+#              │                       │
+#        input_metadata           input_file
+#              │                       │
+#        Session Form             File Upload
+#              │                       │
+#        ┌─────┴─────┐           dataset file
+#        │     │     │                 │
+#     domain  goal  state              │
+#              │                       │
+#              └───────────┬───────────┘
+#                          │
+#                    Databy workflow
+#                          │
+#                 cleaning / analysis
+######
 
+from uuid import uuid4
 from typing import Literal
 from pydantic import BaseModel, Field
 
@@ -36,7 +51,61 @@ class LocalUploadDataset(FileUpload):
         pass
 
 
+class ConnectOpenSourceDataset(FileUpload):
+    """UserUploadDataset
+
+    User connects dataset from Open source environment.
+    """
+
+    def on_store(self, files, ctx):
+        pass
+
+    def on_list(self, ctx):
+        pass
+
+    def on_read(self, name, ctx):
+        pass
+
+
+class ConnectDatabase(FileUpload):
+    """UserUploadDataset
+
+    User connects dataset from Open source environment.
+    """
+
+    def on_store(self, files, ctx):
+        pass
+
+    def on_list(self, ctx):
+        pass
+
+    def on_read(self, name, ctx):
+        pass
+
+
 class SessionForm(BaseModel):
+    """Databy Client Entry Point
+
+     Start Session
+    │
+    ├── SessionForm
+    │     ├── business_domain
+    │     ├── objective
+    │     └── clean_state
+    │
+    └── FileUpload
+          └── dataset
+                │
+                ▼
+         Databy Session
+    """
+
+    session_id: UUID | str = Field(
+        description="User Session ID", init=False, repr=True, default=uuid4
+    )
+    user_id: UUID | str = Field(
+        description="User ID", init=False, repr=True, default=uuid4
+    )
     business_domain: Literal[
         "Chat History",
         "B2C/B2B Transactions",
@@ -49,8 +118,12 @@ class SessionForm(BaseModel):
         json_schema_extra={"ui": {"type": "select", "default": True}},
     )
     objective: str = Field(
-        description="What are u using this for?",
-        json_schema_extra={"ui": {"type": "select", "default": True}},
+        description="What are you using this dataset for?",
+        json_schema_extra={
+            "ui": {
+                "type": "text",
+            }
+        },
     )
     clean_state: Literal["mess", "moderate", "clean"] = Field(
         default="clean",
@@ -67,28 +140,66 @@ def submit_input(user_input: SessionForm) -> str:
     return user_input.model_dump_json()
 
 
-databy_forms: list[FormInput] = [
-    FormInput(
-        model=SessionForm,  # Required: the Pydantic model
-        name="Session Form",  # App name (default: model name)
-        title="Start Session",  # Card heading (default: model name)
-        # tool_name="collect_sessionform",        # Tool name (default: collect_{model})
-        submit_text="Submit",  # Button label (default: "Submit")
-        on_submit=submit_input,  # Optional callback
-    )
-]
+class DatabySession(BaseModel):
+    metadata: SessionForm
+    files: list[str] = Field(default_factory=list)
 
-databy_file_inputs: list = [
+
+from fastmcp.apps import forms
+
+DatabySessionApp = forms.from_model(
+    FormInput,
     FileUpload(
         name="Upload File",
-        description="Manually upload your dataset to clean.",
+        max_file_size=10 * 1024 * 1024,
+        title="File Upload",
+        description=str(
+            "Drop files to upload them to the server. "
+            "The model can then read and analyze them "
+            "without using the context window."
+        ),
         drop_label="Drop files here. Acceptable filetype extensions: csv, xlsx, parquet, pdf, HTML, img/jpeg.",
-    )
-    # LocalUploadDataset(
-    #     name="Upload Dataset",  # App name (used in tool routing)
-    #     max_file_size=10 * 1024 * 1024,  # 10 MB default, enforced server-side
-    #     title="File Upload",  # Heading shown in the UI
-    #     description="Drop files to...",  # Description text below the heading
-    #     drop_label="Drop files here",  # Label inside the drop zone
-    # )
-]
+    ),
+)
+
+# Expected Object:
+#
+# DatabySession(
+#     metadata=SessionForm(
+#         session_id=...,
+#         user_id=...,
+#         business_domain="B2C/B2B Transactions",
+#         objective="Clean transaction data",
+#         clean_state="mess",
+#     ),
+#     files=[
+#         "transactions.csv",
+#     ],
+# )
+
+
+# databy_forms: list[FormInput] = [
+#     FormInput(
+#         model=SessionForm,  # Required: the Pydantic model
+#         name="Session Form",  # App name (default: model name)
+#         title="Start Session",  # Card heading (default: model name)
+#         # tool_name="collect_sessionform",        # Tool name (default: collect_{model})
+#         submit_text="Submit",  # Button label (default: "Submit")
+#         on_submit=submit_input,  # Optional callback
+#     )
+# ]
+
+# databy_file_inputs: list = [
+#     FileUpload(
+#         name="Upload File",
+#         description="Manually upload your dataset to clean.",
+#         drop_label="Drop files here. Acceptable filetype extensions: csv, xlsx, parquet, pdf, HTML, img/jpeg.",
+#     )
+#     # LocalUploadDataset(
+#     #     name="Upload Dataset",  # App name (used in tool routing)
+#     #     max_file_size=10 * 1024 * 1024,  # 10 MB default, enforced server-side
+#     #     title="File Upload",  # Heading shown in the UI
+#     #     description="Drop files to...",  # Description text below the heading
+#     #     drop_label="Drop files here",  # Label inside the drop zone
+#     # )
+# ]

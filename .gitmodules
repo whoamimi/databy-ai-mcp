@@ -1,3 +1,0 @@
-[submodule "src/databy_ai_mcp/core/statistical_inference"]
-	path = src/databy_ai_mcp/core/statistical_inference
-	url = https://github.com/whoamimi/pyspark-statistical-inference.git

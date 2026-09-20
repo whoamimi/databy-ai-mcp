@@ -9,9 +9,11 @@ from data_profiling import ProfileReport
 from pyspark.sql import SparkSession
 
 
-def get_data_profile(session_id: str, **kwargs):
+def profile_dataset(session_id: str, **kwargs):
     """
-    get_data_profile.
+    profile_dataset.
+
+    Uses ydata-dataset library to generate detailed schema profile report in HTML format. Use this at the initial stage of cleaning session.
 
     Reference
         https://github.com/Data-Centric-AI-Community/fg-data-profiling/blob/master/examples/integrations/databricks/ydata-profiling%20in%20Databricks.ipynb
