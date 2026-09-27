@@ -7,9 +7,15 @@
 
 from fastmcp import FastMCP
 
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
+
 
 def databy_resource_providers(mcp: FastMCP):
     """Databy Prefab App Generative or pre-defined UI tools"""
+
+    logger.debug("registering databy resource providers on %s", mcp.name)
 
     @mcp.resource(
         uri="databy://{user_id}/session/{session_id}",

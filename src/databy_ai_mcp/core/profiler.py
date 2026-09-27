@@ -8,6 +8,10 @@
 from data_profiling import ProfileReport
 from pyspark.sql import SparkSession
 
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
+
 
 def profile_dataset(session_id: str, **kwargs):
     """
@@ -18,6 +22,8 @@ def profile_dataset(session_id: str, **kwargs):
     Reference
         https://github.com/Data-Centric-AI-Community/fg-data-profiling/blob/master/examples/integrations/databricks/ydata-profiling%20in%20Databricks.ipynb
     """
+
+    logger.info("profiling dataset for session %s", session_id)
 
     spark = SparkSession.builder.appName("databy-ai-mcp").getOrCreate()
     df = spark.table(session_id)
@@ -48,6 +54,8 @@ def profile_dataset(session_id: str, **kwargs):
             "spearman": {"calculate": True},
         },
     )
+
+    logger.debug("rendering profile report for session %s to HTML", session_id)
 
     # alternatively, report.to_json()
     return report.to_html()
