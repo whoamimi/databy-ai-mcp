@@ -1,3 +1,12 @@
+/*
+ * Filename: /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/.gitignore
+ * Path: /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp
+ * Created Date: Tuesday, September 15th 2026, 6:36:08 am
+ * Author: Mimi Phan
+ *
+ * Copyright (c) 2026 Mimeus AI
+ */
+
 # Python-generated files
 __pycache__/
 *.py[oc]
@@ -11,3 +20,4 @@ wheels/
 
 # MkDocs build output
 site/
+.cache

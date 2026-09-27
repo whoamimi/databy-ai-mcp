@@ -1,4 +1,4 @@
-# Databy AI MCP Server
+# Databy AI
 
 Data engineering capabilities as a Claude MCP connector, served on [FastMCP](https://gofastmcp.com).
 

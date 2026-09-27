@@ -14,9 +14,18 @@ theme:
   logo: dinos/dino_tail.png
   favicon: dinos/dino_tail.png
   palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
     - scheme: slate
       primary: custom
       accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
   font:
     text: Inter
     code: JetBrains Mono
@@ -24,6 +33,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top.hide
     - content.code.copy
     - content.code.annotate
