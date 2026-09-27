@@ -1,12 +1,3 @@
-'''
-Filename: /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/src/databy_ai_mcp/logging_config.py
-Path: /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/src/databy_ai_mcp
-Created Date: Monday, September 28th 2026, 12:10:36 am
-Author: Mimi Phan
-
-Copyright (c) 2026 Mimeus AI
-'''
-
 """src/databy_ai_mcp/logging_config.py
 
 Single logging entry point for the Databy AI MCP server.
