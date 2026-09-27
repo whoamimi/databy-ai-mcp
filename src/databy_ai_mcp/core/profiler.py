@@ -48,29 +48,27 @@ def load_dataframe(filename: str, raw: bytes) -> pd.DataFrame:
     return reader(io.BytesIO(raw))
 
 
-def profile_dataset(filename: str, raw: bytes) -> str:
-    """
-    profile_dataset.
-
-    Uses the data-profiling library to generate a detailed schema profile
-    report in HTML format for a dropped file. Use this at the initial stage
-    of a cleaning session.
-
-    Args:
-        filename: Original filename of the uploaded dataset (drives format
-            detection — csv, xlsx, xls, parquet, html).
-        raw: Raw file bytes, as read from the file upload store.
+def build_report(df: pd.DataFrame, title: str) -> ProfileReport:
+    """Build a data-profiling report for ``df``.
 
     Reference
         https://github.com/Data-Centric-AI-Community/fg-data-profiling
     """
 
-    logger.info("profiling uploaded file %r", filename)
+    return ProfileReport(df, title=title)
 
-    df = load_dataframe(filename, raw)
-    report = ProfileReport(df, title=filename)
 
-    logger.debug("rendering profile report for %r to HTML", filename)
+def summarize_dataframe(df: pd.DataFrame) -> dict:
+    """Return a small, tool-result-sized summary of ``df``.
 
-    # alternatively, report.to_json()
-    return report.to_html()
+    The full profiling report can run into hundreds of KB of HTML, which
+    exceeds an agent's tool-result token budget. This is what
+    ``databy_profile_dataset`` returns instead of the raw report.
+    """
+
+    return {
+        "rows": int(df.shape[0]),
+        "columns": int(df.shape[1]),
+        "dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
+        "missing_values": {col: int(n) for col, n in df.isna().sum().items()},
+    }

@@ -606,7 +606,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fastmcp", extras = ["apps"], specifier = ">=3.4.7" },
+    { name = "fastmcp", extras = ["apps"], specifier = ">=4.0.10,<5.0.0" },
     { name = "fg-data-profiling", extras = ["spark"], specifier = ">=4.20.0" },
     { name = "httpx", specifier = ">=0.28.1" },
 ]

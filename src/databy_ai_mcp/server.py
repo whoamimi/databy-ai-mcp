@@ -5,6 +5,7 @@ from fastmcp.apps.file_upload import FileUpload
 from fastmcp.apps.form import FormInput
 
 from .logging_config import get_logger
+from .mcp.resources import databy_resource_providers
 from .mcp.tools import register_tools
 from .ui.schema import SessionForm, submit_input
 
@@ -27,6 +28,7 @@ file_upload = FileUpload(
 mcp.add_provider(FormInput(model=SessionForm, on_submit=submit_input))
 mcp.add_provider(file_upload)
 register_tools(mcp, file_upload)
+databy_resource_providers(mcp)
 
 logger.debug("registered providers and tools on %s", mcp.name)
 
