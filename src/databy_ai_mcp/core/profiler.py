@@ -5,57 +5,70 @@
 # Created Date:	Tuesday, 15th Sep 2026 5:22:09 am
 # Copyright (c) 2026 Mimi (https://github.com/whoamimi)
 
+import io
+from pathlib import Path
+
+import pandas as pd
 from data_profiling import ProfileReport
-from pyspark.sql import SparkSession
 
 from ..logging_config import get_logger
 
 logger = get_logger(__name__)
 
+_READERS = {
+    ".csv": pd.read_csv,
+    ".xlsx": pd.read_excel,
+    ".xls": pd.read_excel,
+    ".parquet": pd.read_parquet,
+    ".html": lambda buf: pd.read_html(buf)[0],
+}
 
-def profile_dataset(session_id: str, **kwargs):
+
+def load_dataframe(filename: str, raw: bytes) -> pd.DataFrame:
+    """Parse an uploaded file's raw bytes into a pandas DataFrame.
+
+    Args:
+        filename: Original filename, used to pick a reader by extension.
+        raw: Raw file bytes (already base64-decoded).
+
+    Returns:
+        The parsed DataFrame.
+
+    Raises:
+        ValueError: If the file extension isn't one of the supported types.
     """
-    profile_dataset.
 
-    Uses ydata-dataset library to generate detailed schema profile report in HTML format. Use this at the initial stage of cleaning session.
+    suffix = Path(filename).suffix.lower()
+    reader = _READERS.get(suffix)
+    if reader is None:
+        raise ValueError(
+            f"Unsupported file type {suffix!r} for profiling. "
+            f"Supported extensions: {sorted(_READERS)}"
+        )
+    return reader(io.BytesIO(raw))
+
+
+def build_report(df: pd.DataFrame, title: str) -> ProfileReport:
+    """Build a data-profiling report for ``df``.
 
     Reference
-        https://github.com/Data-Centric-AI-Community/fg-data-profiling/blob/master/examples/integrations/databricks/ydata-profiling%20in%20Databricks.ipynb
+        https://github.com/Data-Centric-AI-Community/fg-data-profiling
     """
 
-    logger.info("profiling dataset for session %s", session_id)
+    return ProfileReport(df, title=title)
 
-    spark = SparkSession.builder.appName("databy-ai-mcp").getOrCreate()
-    df = spark.table(session_id)
 
-    report = ProfileReport(
-        df,
-        title=session_id,
-        # data_profiling's typeset inference (typeset.infer_type) isn't wired
-        # to its Spark backend, so infer_dtypes=True raises a multimethod
-        # DispatchError; False falls back to reading types off the Spark
-        # schema directly, which is the supported path for Spark input.
-        infer_dtypes=kwargs.get("infer_dtypes", False),
-        # The Spark scatter-matrix path assumes every interacting column is
-        # numeric and errors on the rest, so continuous interactions are off
-        # by default here.
-        interactions={"continuous": kwargs.get("interactions", False)},
-        # missing_bar's Spark implementation casts every column to double to
-        # check for NaNs, which fails on non-numeric columns; leave missing
-        # diagrams off by default and let callers opt in for numeric-only data.
-        missing_diagrams={
-            "bar": kwargs.get("missing_diagrams", False),
-            "matrix": kwargs.get("missing_diagrams", False),
-            "heatmap": kwargs.get("missing_diagrams", False),
-        },
-        correlations={
-            "auto": {"calculate": False},
-            "pearson": {"calculate": True},
-            "spearman": {"calculate": True},
-        },
-    )
+def summarize_dataframe(df: pd.DataFrame) -> dict:
+    """Return a small, tool-result-sized summary of ``df``.
 
-    logger.debug("rendering profile report for session %s to HTML", session_id)
+    The full profiling report can run into hundreds of KB of HTML, which
+    exceeds an agent's tool-result token budget. This is what
+    ``databy_profile_dataset`` returns instead of the raw report.
+    """
 
-    # alternatively, report.to_json()
-    return report.to_html()
+    return {
+        "rows": int(df.shape[0]),
+        "columns": int(df.shape[1]),
+        "dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
+        "missing_values": {col: int(n) for col, n in df.isna().sum().items()},
+    }
