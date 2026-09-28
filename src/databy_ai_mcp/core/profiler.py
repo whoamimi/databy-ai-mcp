@@ -1,14 +1,9 @@
-# /
-#
-# ---
-# Last Modified:	Tuesday, 15th September 2026 5:22:09 am
-# Created Date:	Tuesday, 15th Sep 2026 5:22:09 am
-# Copyright (c) 2026 Mimi (https://github.com/whoamimi)
+# src.databy_ai_mcp.core.profiler
 
 from data_profiling import ProfileReport
-from pyspark.sql import SparkSession
 
-from ..logging_config import get_logger
+from ..utils.logging import get_logger
+from .crud.db import get_spark
 
 logger = get_logger(__name__)
 
@@ -25,7 +20,7 @@ def profile_dataset(session_id: str, **kwargs):
 
     logger.info("profiling dataset for session %s", session_id)
 
-    spark = SparkSession.builder.appName("databy-ai-mcp").getOrCreate()
+    spark = get_spark()
     df = spark.table(session_id)
 
     report = ProfileReport(

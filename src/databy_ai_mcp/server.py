@@ -2,23 +2,16 @@
 
 from fastmcp import FastMCP
 
-from .logging_config import get_logger
-from .ui.schema import DatabySessionApp
+from .ui.form import create_session
+from .utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-mcp = FastMCP("Databy AI MCP")
+mcp = FastMCP("Databy AI MCP", stateless_app=True)
 # mcp.add_provider(*databy_file_inputs, namespace="input_file")
 # mcp.add_provider(*databy_forms, namespace="input_metadata")
-mcp.add_tool(tool=DatabySessionApp)
-
-logger.debug("registered tool %r on %s", DatabySessionApp.name, mcp.name)
+mcp.add_tool(tool=create_session)
+logger.info("starting %s", mcp.name)
 
 if __name__ == "__main__":
-    # Running this module directly is an application entry point too, so it
-    # owns logging setup exactly like main.main() does.
-    from .logging_config import configure_logging
-
-    configure_logging()
-    logger.info("starting %s", mcp.name)
     mcp.run()

@@ -1,40 +1,65 @@
 """src/databy_ai_mcp/core/crud/tools.py
 
-Contains CRUD methods.
-"""
 
-_DEFAULT_HEADER = False
-_DEFAULT_INFERSCHEMA = True
-_DEFAULT_TXT_SEP = _DEFAULT_HTML_SEP = _DEFAULT_MD_SEP = "|"
+Spark-based dataset loading helpers."""
+
+from io import StringIO
+from pathlib import Path
+from typing import Any, Literal
+
+import pandas as pd
+from pyspark.sql import DataFrame, SparkSession
+
+SparkFormat = Literal["csv", "json", "parquet", "orc", "text"]
 
 
 def load_dataset(
+    spark: SparkSession,
     file_url_path: str,
-    spark_read_extension: Literal["csv", "xlsx", "html", "txt", "markdown"],
-    **kwargs,
-):
-    """
-        load_dataset
+    data_format: SparkFormat,
+    **options: Any,
+) -> DataFrame:
+    """Load a Spark-supported dataset format."""
+    return spark.read.format(data_format).options(**options).load(file_url_path)
 
-        Loads dataset with Spark context client.
-        Usage example:
-            ```(
-                spark.read.format("com.databricks.spark.csv")
-                .options(header="False", inferschema="true", sep="|")
-                .load("s3://ui-spark-social-science-public/data/Performance_2015Q1.txt")
-            )
-            ```
-        Args:
-            file_url_path (str): File dump path URL location in datalake.
-            spark_read_extension (Literal[&quot;csv&quot;, &quot;xlsx&quot;, &quot;html&quot;, &quot;txt&quot;, &quot;markdown&quot;]): Defines table reader type.
 
-        Returns:
-            (pyspark.sql.dataframe.DataFrame
-    ): Loaded parsed table.
-    """
+def load_excel(
+    spark: SparkSession,
+    file_url_path: str,
+    **kwargs: Any,
+) -> DataFrame:
+    """Load a local Excel file through pandas."""
+    pandas_df = pd.read_excel(Path(file_url_path), **kwargs)
+    return spark.createDataFrame(pandas_df)
 
-    return spark.read.format(file_url_path).options(
-        header=kwargs.get("header", _DEFAULT_HEADER),
-        inferschema=kwargs.get("inferschema", _DEFAULT_INFERSCHEMA),
-        sep=kwargs.get("sep", _DEFAULT_TXT_SEP).load(file_url_path),
+
+def load_markdown_table(
+    spark: SparkSession,
+    file_url_path: str,
+) -> DataFrame:
+    """Load the first Markdown table from a local file."""
+    markdown = open(file_url_path, encoding="utf-8").read()
+    pandas_df = pd.read_csv(
+        StringIO(markdown),
+        sep="|",
+        skipinitialspace=True,
     )
+
+    pandas_df = pandas_df.dropna(axis=1, how="all")
+    pandas_df.columns = [str(column).strip() for column in pandas_df.columns]
+
+    return spark.createDataFrame(pandas_df)
+
+
+def load_html_table(
+    spark: SparkSession,
+    file_url_path: str,
+    **kwargs,
+) -> DataFrame:
+    """Load the first HTML table from a local file."""
+    tables = pd.read_html(file_url_path, **kwargs)
+
+    if not tables:
+        raise ValueError(f"No HTML tables found in {file_url_path!r}")
+
+    return spark.createDataFrame(tables[0])

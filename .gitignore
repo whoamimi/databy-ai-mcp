@@ -11,5 +11,8 @@ wheels/
 
 # MkDocs build output
 site/
-.cache
+.cache/
 .claude/worktrees
+.venv
+.pytest_cache
+.ruff_cache

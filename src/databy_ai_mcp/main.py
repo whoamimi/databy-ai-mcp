@@ -1,25 +1,13 @@
 # src/databy_ai_mcp/main.py
 
-from .logging_config import configure_logging, get_logger
+import uvicorn
 
-logger = get_logger(__name__)
-
-
-def main() -> None:
-    """App's entry point.
-
-    The one place logging is initialised — do it before importing the server so
-    that registration-time logs from the MCP layer are captured too.
-    """
-
-    configure_logging()
-
-    from .server import mcp
-
-    logger.info("starting %s", mcp.name)
-
-    return mcp.run()
-
+from .utils.logging import LOGGING_CONFIG
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run(
+        "databy_ai_mcp.server:app",
+        host="0.0.0.0",
+        port=8000,
+        log_config=LOGGING_CONFIG,
+    )

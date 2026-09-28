@@ -19,68 +19,10 @@
 #                 cleaning / analysis
 ######
 
-from uuid import UUID, uuid4
 from typing import Literal
+from uuid import UUID, uuid4
+
 from pydantic import BaseModel, Field
-
-from fastmcp.apps.form import FormInput
-from fastmcp.apps.file_upload import FileUpload
-
-
-class LocalUploadDataset(FileUpload):
-    """UserUploadDataset
-
-    User manually uploads or inserts or drops dataset file.
-
-    The LLM sees file_manager, list_files, and read_file. It calls file_manager to show the upload interface, then uses list_files and read_file to work with whatever the user uploaded. store_files is app-only — the UI calls it directly and the LLM never needs to know about it.
-
-    Acceptable file types include:
-    - *.csv,
-    - *.xlsx,
-    - *.html,
-    - *.parquet.
-    """
-
-    def on_store(self, files, ctx):
-        pass
-
-    def on_list(self, ctx):
-        pass
-
-    def on_read(self, name, ctx):
-        pass
-
-
-class ConnectOpenSourceDataset(FileUpload):
-    """UserUploadDataset
-
-    User connects dataset from Open source environment.
-    """
-
-    def on_store(self, files, ctx):
-        pass
-
-    def on_list(self, ctx):
-        pass
-
-    def on_read(self, name, ctx):
-        pass
-
-
-class ConnectDatabase(FileUpload):
-    """UserUploadDataset
-
-    User connects dataset from Open source environment.
-    """
-
-    def on_store(self, files, ctx):
-        pass
-
-    def on_list(self, ctx):
-        pass
-
-    def on_read(self, name, ctx):
-        pass
 
 
 class SessionForm(BaseModel):
@@ -101,10 +43,10 @@ class SessionForm(BaseModel):
     """
 
     session_id: UUID | str = Field(
-        description="User Session ID", init=False, repr=True, default=uuid4
+        description="User Session ID", init=False, repr=True, default_factory=uuid4
     )
     user_id: UUID | str = Field(
-        description="User ID", init=False, repr=True, default=uuid4
+        description="User ID", init=False, repr=True, default_factory=uuid4
     )
     business_domain: Literal[
         "Chat History",
@@ -145,22 +87,50 @@ class DatabySession(BaseModel):
     files: list[str] = Field(default_factory=list)
 
 
-from fastmcp.apps import forms
+# DatabySessionApp = Form.from_model(DatabySession)
 
-DatabySessionApp = forms.from_model(
-    FormInput,
-    FileUpload(
-        name="Upload File",
-        max_file_size=10 * 1024 * 1024,
-        title="File Upload",
-        description=str(
-            "Drop files to upload them to the server. "
-            "The model can then read and analyze them "
-            "without using the context window."
-        ),
-        drop_label="Drop files here. Acceptable filetype extensions: csv, xlsx, parquet, pdf, HTML, img/jpeg.",
-    ),
-)
+# DatabySessionApp = [
+#     Form.from_model(FormInput),
+#     FileUpload(
+#         name="Upload File",
+#         max_file_size=10 * 1024 * 1024,
+#         title="File Upload",
+#         description=str(
+#             "Drop files to upload them to the server. "
+#             "The model can then read and analyze them "
+#             "without using the context window."
+#         ),
+#         drop_label="Drop files here. Acceptable filetype extensions: csv, xlsx, parquet, pdf, HTML, img/jpeg.",
+#     ),
+# ]
+
+# databy_form = FormInput(
+#     model=SessionForm,
+#     name="Session Form",
+#     title="Start Session",
+#     submit_text="Submit",
+#     on_submit=submit_input,
+# )
+
+# databy_file_upload = FileUpload(
+#     name="Upload File",
+#     max_file_size=10 * 1024 * 1024,
+#     title="File Upload",
+#     description=(
+#         "Drop files to upload them to the server. "
+#         "The model can then read and analyze them "
+#         "without using the context window."
+#     ),
+#     drop_label=(
+#         "Drop files here. Acceptable filetype extensions: "
+#         "csv, xlsx, parquet, pdf, HTML, img/jpeg."
+#     ),
+# )
+
+# DatabySessionApp = [
+#     Form.from_model(databy_form),
+#     databy_file_upload,
+# ]
 
 # Expected Object:
 #

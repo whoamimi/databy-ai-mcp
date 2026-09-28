@@ -1,6 +1,18 @@
-# /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/src/databy_ai_mcp/ui/__init__.py
-#
-# ------------------------------------------------------------------------------
-# Last Modified:	Wednesday, 26th August 2026 10:09:19 pm
-# Created Date:	Wednesday, 26th Aug 2026 10:09:17 pm
-# Copyright (c) 2026 Mimi P. (https://github.com/whoamimi)
+"""metadata = SessionForm(
+    business_domain=BusinessDomain.TRANSACTIONS,
+    objective="Clean transaction data",
+    clean_state=CleanState.MESS,
+)
+
+session = create_session(metadata)
+
+session = attach_file(
+    session,
+    filename="transactions.csv",
+    content_type="text/csv",
+    size_bytes=125_000,
+    path=Path("data/transactions.csv"),
+)
+
+print(session.model_dump_json(indent=2))
+"""

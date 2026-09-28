@@ -1,13 +1,10 @@
-# /Users/mimiphan/mimeus-app/databy-ai/databy-ai-mcp/src/databy_ai_mcp/ui/provider.py
-#
-# ------------------------------------------------------------------------------
-# Last Modified:	Wednesday, 26th August 2026 10:27:26 pm
-# Created Date:	Wednesday, 26th Aug 2026 10:27:25 pm
-# Copyright (c) 2026 Mimi P. (https://github.com/whoamimi)
+# src.databy_ai_mcp.mcp.resources
 
 from fastmcp import FastMCP
+from fastmcp.utilities.ui import create_secure_html_response
 
-from ..logging_config import get_logger
+from ..core.profiler import profile_dataset
+from ..utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -34,7 +31,7 @@ def databy_resource_providers(mcp: FastMCP):
     async def get_current_session(user_id: str, session_id: str):
         """Displays user's most recent and active session config."""
 
-        return f"""
+        return """
     Session Info:
         UUID: 1234-test-demo
         Input Data:
@@ -55,7 +52,8 @@ def databy_resource_providers(mcp: FastMCP):
         mime_type="application/json",  # Explicit MIME type
         tags={"exploratory", "1"},  # Categorization tags
     )
-    async def session_data_profile(user_id: str, session_id: str):
+    async def get_session_profiler(user_id: str, session_id: str):
         """Displays user's most recent and active session config."""
 
-        return "Data Profile Test!"
+        html = profile_dataset(session_id, user_id=user_id)
+        return create_secure_html_response(html, status_code=200)
