@@ -19,3 +19,7 @@ def main() -> None:
     logger.info("starting %s", mcp.name)
 
     return mcp.run()
+
+
+if __name__ == "__main__":
+    main()
